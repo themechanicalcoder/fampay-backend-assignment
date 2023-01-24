@@ -9,6 +9,7 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
 type MongoDB struct {
@@ -20,13 +21,31 @@ type MongoDB struct {
 func Connect(config config.DBConfig) (DB, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	// "mongodb+srv://gourav:gourav@cluster0.1tstn9p.mongodb.net/?retryWrites=true&w=majority"
+	
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.MongoURI))
 	if err != nil {
 		return nil, err
 	}
 	
 	return MongoDB{client: client, databaseName: config.Database, collectionName: config.Collection}, err
+}
+
+func (db MongoDB) CreateIndex() {
+	collection := db.client.Database(db.databaseName).Collection(db.collectionName)
+    index := []mongo.IndexModel{
+        {
+            Keys: bsonx.Doc{{Key: "title", Value: bsonx.String("text")}},
+        },
+		{
+            Keys: bsonx.Doc{{Key: "description", Value: bsonx.String("text")}},
+        },
+    }
+
+    opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
+    _, err := collection.Indexes().CreateMany(context.Background(), index, opts)
+    if err != nil {
+        panic(err)
+    }
 }
 
 func (db MongoDB) InsertMany(ctx context.Context, data []interface{}) (int, error) {

@@ -12,10 +12,10 @@ type API struct {
 	app *iris.Application
 	host string
 	port int
-	manager *business.VideoManager
+	manager business.VideoStore
 }
 
-func Initialize(config config.Server, manager *business.VideoManager) API {
+func Initialize(config config.Server, manager business.VideoStore) API {
 	app := iris.New()
 	return API{app: app, manager: manager, host: config.Addr, port: config.Port}
 }

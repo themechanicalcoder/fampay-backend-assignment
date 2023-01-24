@@ -9,7 +9,7 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/config"
 	"github.com/themechanicalcoder/fampay-backend-assignment/database"
 	"github.com/themechanicalcoder/fampay-backend-assignment/jobs"
-	"github.com/themechanicalcoder/fampay-backend-assignment/youtubeservice"
+	"github.com/themechanicalcoder/fampay-backend-assignment/web"
 )
 
 type CmdLineParams struct {
@@ -33,7 +33,7 @@ func main() {
 		log.Fatal("Error while loading config", err)
 	}
 
-	youtubeservice, err := youtubeservice.Initialise(cfg.YoutubeConfig)
+	youtubeservice, err := web.Initialise(cfg.YoutubeConfig)
 	if err != nil {
 		log.Fatal("Error while initializing youtube service %v", err)
 	}
@@ -42,11 +42,12 @@ func main() {
 	if err != nil {
 		log.Fatal("Error while connecting to database %v", err)
 	}
+	
 
-	manager := business.VideoManager{DB: db}
-	worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, &youtubeservice, &manager)
+	store := business.Initialize(db)
+	worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store)
 	go worker.Start()
 
-	api := api.Initialize(cfg.Server, &manager)
+	api := api.Initialize(cfg.Server, store)
 	api.Run()
 }

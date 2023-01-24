@@ -11,45 +11,45 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type VideoManager struct {
-	DB database.DB
+type YoutubeVideoStore struct {
+	db database.DB
 }
 
-// {$or: [{ title: { $regex: "est", $options: 'i' } },
-//{ description: { $regex: "est", $options: 'i' } }]
-//}
+func Initialize(database database.DB) VideoStore { 
+	return YoutubeVideoStore{db : database}
+}
 
-func (manager VideoManager) Search(query string) (videos []models.YoutubeVideo, err error) {
+func (manager YoutubeVideoStore) Search(query string) (videos []models.YoutubeVideo, err error) {
 	filter := generateRegexFilter(query)
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{"publishedat", -1}})
-	err = manager.DB.Find(context.Background(), filter, findOptions, &videos)
+	err = manager.db.Find(context.Background(), filter, findOptions, &videos)
 	if err != nil {
 		return nil, err
 	}
 	return videos, nil
 }
 
-func (manager VideoManager) FetchVideos(offset int, limit int) (videos []models.YoutubeVideo, err error) {
+func (manager YoutubeVideoStore) FetchVideos(offset int, limit int) (videos []models.YoutubeVideo, err error) {
 	filter := bson.M{}
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{"publishedat", -1}})
 	findOptions.SetSkip(int64(offset))
 	findOptions.SetLimit(int64(limit))
 
-	err = manager.DB.Find(context.Background(), filter, findOptions, &videos)
+	err = manager.db.Find(context.Background(), filter, findOptions, &videos)
 	if err != nil {
 		return nil, err
 	}
 	return videos, nil
 }
 
-func (manager VideoManager) InsertVideos(videos []models.YoutubeVideo) error {
+func (manager YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) error {
 	var interfaces []interface{}
 	for _, data := range videos {
 		interfaces = append(interfaces, data)
 	}
-	_, err := manager.DB.InsertMany(context.Background(), interfaces)
+	_, err := manager.db.InsertMany(context.Background(), interfaces)
 	if err == nil {
 		return fmt.Errorf("Error while inserting videos in database %w", err)
 	}

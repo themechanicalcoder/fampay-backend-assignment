@@ -7,20 +7,20 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/themechanicalcoder/fampay-backend-assignment/business"
-	"github.com/themechanicalcoder/fampay-backend-assignment/youtubeservice"
+	"github.com/themechanicalcoder/fampay-backend-assignment/web"
 )
 
 type Worker struct {
 	duration       time.Duration
-	youtubeService *youtubeservice.YouTubeService
-	videoManager   *business.VideoManager
+	youtubeService web.WebService
+	videoManager   business.VideoStore
 }
 
-func Initialize(interval int, youtubeService *youtubeservice.YouTubeService, videoManager *business.VideoManager) Worker {
+func Initialize(interval int, youtubeService web.WebService, videoManager business.VideoStore) Worker {
 	return Worker{duration: time.Duration(time.Second * time.Duration(interval)), youtubeService: youtubeService, videoManager: videoManager}
 }
 
-func (w *Worker) Start() {
+func (w Worker) Start() {
 	for {
 		youtubeVideos, err := w.youtubeService.FetchYoutubeVideos()
 		if err != nil {
