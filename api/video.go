@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/kataras/iris/v12"
@@ -13,6 +14,7 @@ func (api API) getVideos(ctx iris.Context) {
 	
 	videos, err := api.manager.FetchVideos(offset, limit)
 	if err != nil {
+		log.Println("Error while fetching videos ", err)
 		responseJson(ctx, http.StatusInternalServerError, models.SearchResponse{
 			Videos: []models.YoutubeVideo{},
 			Error: models.ErrorResponse{

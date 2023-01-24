@@ -11,7 +11,7 @@ type ErrorResponse struct {
 type SearchResponse struct {
 	Status string
 	Videos []YoutubeVideo `json:"videos"`
-	Error  ErrorResponse  `json:"error"`
+	Error  ErrorResponse  `json:"error,"`
 }
 
 type Thumbnail struct {

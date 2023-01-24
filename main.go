@@ -3,13 +3,15 @@ package main
 import (
 	"flag"
 	"log"
+	"context"
+	"os"
 
 	"github.com/themechanicalcoder/fampay-backend-assignment/api"
 	"github.com/themechanicalcoder/fampay-backend-assignment/business"
 	"github.com/themechanicalcoder/fampay-backend-assignment/config"
 	"github.com/themechanicalcoder/fampay-backend-assignment/database"
-	"github.com/themechanicalcoder/fampay-backend-assignment/jobs"
-	"github.com/themechanicalcoder/fampay-backend-assignment/web"
+	//"github.com/themechanicalcoder/fampay-backend-assignment/jobs"
+	//"github.com/themechanicalcoder/fampay-backend-assignment/web"
 )
 
 type CmdLineParams struct {
@@ -27,27 +29,53 @@ func ReadCmdLine() CmdLineParams {
 
 func main() {
 	cmdParams := ReadCmdLine()
+	log := log.New(os.Stdout, "fampay-backend-assignment : ", log.LstdFlags|log.Lshortfile)
+	if err := run(cmdParams, log); err != nil {
+		log.Printf("main : error: %+v, exiting ", err)
+		os.Exit(1)
+	}
+}
 
+func run(cmdParams CmdLineParams, log *log.Logger) error {
 	cfg, err := config.LoadConfig(cmdParams.Build, cmdParams.ConfigPath)
+	
+	log.Println("Loading Config ")
 	if err != nil {
-		log.Fatal("Error while loading config", err)
+		log.Println("Error while loading config :")
+		return err
 	}
 
-	youtubeservice, err := web.Initialise(cfg.YoutubeConfig)
-	if err != nil {
-		log.Fatal("Error while initializing youtube service %v", err)
-	}
+	log.Println("Initializing youtube service :")
+	// youtubeservice, err := web.Initialise(cfg.YoutubeConfig)
+	// if err != nil {
+	// 	log.Println("Error while initializing youtube service :")
+	// 	return err
+	// }
 
+	log.Println("Initializing database :")
 	db, err := database.Connect(cfg.DBConfig)
 	if err != nil {
-		log.Fatal("Error while connecting to database %v", err)
+		log.Println("Error while connecting to database :")
+		return err
+	}
+
+	log.Println("Creating Indexes : ")
+	err = db.CreateIndex()
+	if err != nil {
+		log.Println("Error while creating index ", err)
 	}
 	
-
+	defer func() {
+		log.Println("Database Stopping :")
+		db.Disconnect(context.Background())
+	}()
+	
+	log.Println("Initializing Store :")
 	store := business.Initialize(db)
-	worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store)
-	go worker.Start()
+	// worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store, log)
+	// go worker.Start()
 
-	api := api.Initialize(cfg.Server, store)
+	api := api.Initialize(cfg.Server, store, log)
 	api.Run()
+	return nil
 }

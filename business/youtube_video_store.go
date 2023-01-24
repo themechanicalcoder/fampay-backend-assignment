@@ -7,7 +7,7 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/database"
 	"github.com/themechanicalcoder/fampay-backend-assignment/models"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -20,9 +20,9 @@ func Initialize(database database.DB) VideoStore {
 }
 
 func (manager YoutubeVideoStore) Search(query string) (videos []models.YoutubeVideo, err error) {
-	filter := generateRegexFilter(query)
-	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{"publishedat", -1}})
+	filter := generateFuzzyFilter(query)
+	sort := bson.D{{"score", bson.D{{"$meta", "textScore"}}}}
+	findOptions := options.Find().SetSort(sort)
 	err = manager.db.Find(context.Background(), filter, findOptions, &videos)
 	if err != nil {
 		return nil, err
@@ -56,9 +56,11 @@ func (manager YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) erro
 	return nil
 }
 
-func generateRegexFilter(keyword string) bson.M {
-	return bson.M{"$or": bson.A{
-		bson.M{"title": bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}},
-		bson.M{"description": bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}},
-	}}
+func generateFuzzyFilter(query string) bson.D {
+	// return bson.M{"$or": bson.A{
+	// 	bson.M{"title": bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}},
+	// 	bson.M{"description": bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}},
+	// }}
+
+	return bson.D{{"$text", bson.D{{"$search", query}}}}
 }

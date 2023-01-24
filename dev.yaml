@@ -10,7 +10,7 @@ Server:
   Addr: "0.0.0.0"
   Port: 3000
 DBConfig: 
-  Database: "fampay"
-  Collection: "video"
+  Database: "fampay1"
+  Collection: "video1"
   MongoURI: ""
   

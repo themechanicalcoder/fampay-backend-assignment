@@ -1,7 +1,6 @@
 package jobs
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -14,10 +13,11 @@ type Worker struct {
 	duration       time.Duration
 	youtubeService web.WebService
 	videoManager   business.VideoStore
+	log            *log.Logger
 }
 
-func Initialize(interval int, youtubeService web.WebService, videoManager business.VideoStore) Worker {
-	return Worker{duration: time.Duration(time.Second * time.Duration(interval)), youtubeService: youtubeService, videoManager: videoManager}
+func Initialize(interval int, youtubeService web.WebService, videoManager business.VideoStore, log *log.Logger) Worker {
+	return Worker{duration: time.Duration(time.Second * time.Duration(interval)), youtubeService: youtubeService, videoManager: videoManager, log: log}
 }
 
 func (w Worker) Start() {
@@ -25,10 +25,10 @@ func (w Worker) Start() {
 		youtubeVideos, err := w.youtubeService.FetchYoutubeVideos()
 		if err != nil {
 			log.Printf("Error while fetching youtube videos  %v", err)
-		}else if len(youtubeVideos) != 0 {
+		} else if len(youtubeVideos) != 0 {
 			err = w.videoManager.InsertVideos(youtubeVideos)
 			if err != nil {
-				fmt.Println(err);
+				w.log.Println("Error while inserting the videos :", err)
 			}
 		}
 		spew.Dump(youtubeVideos)

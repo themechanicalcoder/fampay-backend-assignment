@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/kataras/iris/v12"
 	"github.com/themechanicalcoder/fampay-backend-assignment/business"
@@ -10,14 +11,15 @@ import (
 
 type API struct {
 	app *iris.Application
+	log *log.Logger
 	host string
 	port int
 	manager business.VideoStore
 }
 
-func Initialize(config config.Server, manager business.VideoStore) API {
+func Initialize(config config.Server, manager business.VideoStore, log *log.Logger) API {
 	app := iris.New()
-	return API{app: app, manager: manager, host: config.Addr, port: config.Port}
+	return API{app: app, manager: manager, host: config.Addr, port: config.Port, log: log}
 }
 
 func (api API) register() {

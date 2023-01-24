@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/kataras/iris/v12"
@@ -10,6 +11,7 @@ import (
 func (api API) search(ctx iris.Context) {
 	searchRequest, err := readInput(ctx)
 	if err != nil {
+		api.log.Println("Error while unmarshalling request ", searchRequest)
 		responseJson(ctx, http.StatusBadRequest, models.SearchResponse{
 			Videos: []models.YoutubeVideo{},
 			Error: models.ErrorResponse{
@@ -19,6 +21,7 @@ func (api API) search(ctx iris.Context) {
 	}
 	videos, err := api.manager.Search(searchRequest.Query)
 	if err != nil {
+		api.log.Println(fmt.Sprintf("Error while searching query %s ", searchRequest.Query), err)
 		responseJson(ctx, http.StatusInternalServerError, models.SearchResponse{
 			Videos: []models.YoutubeVideo{},
 			Error: models.ErrorResponse{
