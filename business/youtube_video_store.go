@@ -19,6 +19,7 @@ func Initialize(database database.DB) VideoStore {
 	return YoutubeVideoStore{db : database}
 }
 
+// Search videos containing partial match for the search query in either video title or description.
 func (manager YoutubeVideoStore) Search(query string) (videos []models.YoutubeVideo, err error) {
 	filter := generateFuzzyFilter(query)
 	sort := bson.D{{"score", bson.D{{"$meta", "textScore"}}}}
@@ -30,6 +31,9 @@ func (manager YoutubeVideoStore) Search(query string) (videos []models.YoutubeVi
 	return videos, nil
 }
 
+/*
+	Returns paginated sorted in descending order of published datetime.
+*/
 func (manager YoutubeVideoStore) FetchVideos(offset int, limit int) (videos []models.YoutubeVideo, err error) {
 	filter := bson.M{}
 	findOptions := options.Find()
@@ -44,6 +48,9 @@ func (manager YoutubeVideoStore) FetchVideos(offset int, limit int) (videos []mo
 	return videos, nil
 }
 
+/*
+	Insert the youtube videos into database
+*/
 func (manager YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) error {
 	var interfaces []interface{}
 	for _, data := range videos {
@@ -56,11 +63,9 @@ func (manager YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) erro
 	return nil
 }
 
+/*
+	Generate fuzzy filter
+*/
 func generateFuzzyFilter(query string) bson.D {
-	// return bson.M{"$or": bson.A{
-	// 	bson.M{"title": bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}},
-	// 	bson.M{"description": bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}},
-	// }}
-
 	return bson.D{{"$text", bson.D{{"$search", query}}}}
 }

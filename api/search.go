@@ -8,6 +8,7 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/models"
 )
 
+// Search API to search the stored videos using their title and description.
 func (api API) search(ctx iris.Context) {
 	searchRequest, err := readInput(ctx)
 	if err != nil {

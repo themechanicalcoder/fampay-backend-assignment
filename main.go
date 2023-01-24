@@ -10,8 +10,8 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/business"
 	"github.com/themechanicalcoder/fampay-backend-assignment/config"
 	"github.com/themechanicalcoder/fampay-backend-assignment/database"
-	//"github.com/themechanicalcoder/fampay-backend-assignment/jobs"
-	//"github.com/themechanicalcoder/fampay-backend-assignment/web"
+	"github.com/themechanicalcoder/fampay-backend-assignment/jobs"
+	"github.com/themechanicalcoder/fampay-backend-assignment/web"
 )
 
 type CmdLineParams struct {
@@ -45,13 +45,15 @@ func run(cmdParams CmdLineParams, log *log.Logger) error {
 		return err
 	}
 
+	// initialize youtube service
 	log.Println("Initializing youtube service :")
-	// youtubeservice, err := web.Initialise(cfg.YoutubeConfig)
-	// if err != nil {
-	// 	log.Println("Error while initializing youtube service :")
-	// 	return err
-	// }
+	youtubeservice, err := web.Initialise(cfg.YoutubeConfig)
+	if err != nil {
+		log.Println("Error while initializing youtube service :")
+		return err
+	}
 
+	//connect to database
 	log.Println("Initializing database :")
 	db, err := database.Connect(cfg.DBConfig)
 	if err != nil {
@@ -59,6 +61,7 @@ func run(cmdParams CmdLineParams, log *log.Logger) error {
 		return err
 	}
 
+	// create text index for search
 	log.Println("Creating Indexes : ")
 	err = db.CreateIndex()
 	if err != nil {
@@ -70,10 +73,13 @@ func run(cmdParams CmdLineParams, log *log.Logger) error {
 		db.Disconnect(context.Background())
 	}()
 	
+	// initialize business layer
 	log.Println("Initializing Store :")
 	store := business.Initialize(db)
-	// worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store, log)
-	// go worker.Start()
+
+	// initialize job
+	worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store, log)
+	go worker.Start()
 
 	api := api.Initialize(cfg.Server, store, log)
 	api.Run()

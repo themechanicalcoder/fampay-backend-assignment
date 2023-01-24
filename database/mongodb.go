@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	//"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
 type MongoDB struct {
@@ -17,6 +16,9 @@ type MongoDB struct {
 	client         *mongo.Client
 }
 
+/*
+	Connect to the mongodb database
+*/
 func Connect(config config.DBConfig) (DB, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -29,6 +31,9 @@ func Connect(config config.DBConfig) (DB, error) {
 	return MongoDB{client: client, databaseName: config.Database, collectionName: config.Collection}, err
 }
 
+/*
+ 	Create text index for title and description 
+ */
 func (db MongoDB) CreateIndex() error {
 	collection := db.client.Database(db.databaseName).Collection(db.collectionName)
 	model := mongo.IndexModel{Keys: bson.D{{"title", "text"}, {"description", "text"} }}
@@ -36,6 +41,9 @@ func (db MongoDB) CreateIndex() error {
 	return err
 }
 
+/*
+	Insert the data into mongodb
+*/
 func (db MongoDB) InsertMany(ctx context.Context, data []interface{}) (int, error) {
 	results, err := db.client.Database(db.databaseName).Collection(db.collectionName).InsertMany(context.Background(), data)
 	if err != nil {
@@ -44,6 +52,9 @@ func (db MongoDB) InsertMany(ctx context.Context, data []interface{}) (int, erro
 	return len(results.InsertedIDs), nil
 }
 
+/*
+	Fetch data from mongodb for a given filter
+*/
 func (db MongoDB) Find(ctx context.Context, filter interface{}, options *options.FindOptions, results interface{}) error {
 	cur, err := db.client.Database(db.databaseName).Collection(db.collectionName).Find(ctx, filter, options)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/models"
 )
 
+// GET API which returns the stored video data in a paginated response sorted in descending order of published datetime.
 func (api API) getVideos(ctx iris.Context) {
 	limit := ctx.URLParamIntDefault("limit", 10)
 	offset := ctx.URLParamIntDefault("offset", 0)
