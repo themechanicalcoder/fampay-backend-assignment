@@ -1,0 +1,16 @@
+Name: fampay-backend-assignment
+YoutubeConfig:
+  ApiKey: ""
+  RelevanceLanguage: "en"
+  Query: "cricket"
+  MaxResults: 10
+WorkerConfig:
+  QueryInterval: 100 
+Server:
+  Addr: "0.0.0.0"
+  Port: 3000
+DBConfig: 
+  Database: "fampay"
+  Collection: "video"
+  MongoURI: ""
+  
