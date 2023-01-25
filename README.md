@@ -53,5 +53,7 @@ When using Docker Compose,
  - Set the MONGODB_URI environment variable in your .env file to
 ``` MONGODB_URI = mongodb://mongo:27017```
 - Run:
-```docker-compose up -d```
+```docker compose build
+   docker compose up
+```
 - Navigate to ```http://localhost:3000``` to see the app live
