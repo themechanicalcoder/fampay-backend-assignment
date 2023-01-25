@@ -28,7 +28,7 @@ func (youtube YouTubeService) FetchYoutubeVideos() ([]models.YoutubeVideo, error
 	call := youtube.service.Search.List([]string{"snippet"}).
 		Q(youtube.query).
 		MaxResults(int64(youtube.maxResults)).
-		RelevanceLanguage(youtube.relevanceLanguage)
+		RelevanceLanguage(youtube.relevanceLanguage)		
 
 	response, err := call.Do()
 	if err != nil {
@@ -44,6 +44,7 @@ func getYoutubeVideos(response *youtube.SearchListResponse) []models.YoutubeVide
 			Title:       item.Snippet.Title,
 			ChannelId:   item.Snippet.ChannelId,
 			Description: item.Snippet.Description,
+			ChannelTitle: item.Snippet.ChannelTitle,
 			VideoId:     item.Id.VideoId,
 			Kind:        item.Kind,
 			Thumbnails: models.Thumbnail{

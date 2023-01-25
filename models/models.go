@@ -5,13 +5,13 @@ type SearchRequest struct {
 }
 
 type ErrorResponse struct {
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 }
 
 type SearchResponse struct {
 	Status string
 	Videos []YoutubeVideo `json:"videos"`
-	Error  ErrorResponse  `json:"error,"`
+	Error  ErrorResponse  `json:"error,omitempty"`
 }
 
 type Thumbnail struct {

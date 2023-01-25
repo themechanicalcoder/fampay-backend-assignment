@@ -10,7 +10,7 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/business"
 	"github.com/themechanicalcoder/fampay-backend-assignment/config"
 	"github.com/themechanicalcoder/fampay-backend-assignment/database"
-	"github.com/themechanicalcoder/fampay-backend-assignment/jobs"
+	"github.com/themechanicalcoder/fampay-backend-assignment/workers"
 	"github.com/themechanicalcoder/fampay-backend-assignment/web"
 )
 
@@ -78,7 +78,7 @@ func run(cmdParams CmdLineParams, log *log.Logger) error {
 	store := business.Initialize(db)
 
 	// initialize job
-	worker := jobs.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store, log)
+	worker := workers.Initialize(cfg.WorkerConfig.QueryInterval, youtubeservice, store, log)
 	go worker.Start()
 
 	api := api.Initialize(cfg.Server, store, log)

@@ -26,7 +26,7 @@ func (api API) search(ctx iris.Context) {
 		responseJson(ctx, http.StatusInternalServerError, models.SearchResponse{
 			Videos: []models.YoutubeVideo{},
 			Error: models.ErrorResponse{
-				Description: "Something went wrong",
+				Description: fmt.Sprintf("Error while searching for query %s", err.Error()),
 			},
 		})
 	}

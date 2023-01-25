@@ -57,7 +57,7 @@ func (manager YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) erro
 		interfaces = append(interfaces, data)
 	}
 	_, err := manager.db.InsertMany(context.Background(), interfaces)
-	if err == nil {
+	if err != nil {
 		return fmt.Errorf("Error while inserting videos in database %w", err)
 	}
 	return nil
