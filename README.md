@@ -142,7 +142,7 @@ curl --location --request GET 'localhost:3000/v1/search' \
 #### videos `/v1/videos`
 sample request
 ```
-curl --location --request GET 'localhost:3000/v1/videos?limit=5&offset=9'
+curl --location --request GET 'localhost:3000/v1/videos?limit=5&offset=3'
 ```
 sample response
 
