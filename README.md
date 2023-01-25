@@ -23,7 +23,7 @@ To make an API to fetch latest videos sorted in reverse chronological order of t
    cd fampay-backend-assignment
 ```
 
-- Add apikey and mongodburi in the `dev.yaml` file
+- Add apikey in the `dev.yaml` file
 ```
 Name: fampay-backend-assignment
 YoutubeConfig:
