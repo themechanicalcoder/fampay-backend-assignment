@@ -16,3 +16,42 @@ To make an API to fetch latest videos sorted in reverse chronological order of t
 - [ ] Make a dashboard to view the stored videos with filters and sorting options (optional)
 - [x] Optimise search api, so that it's able to search videos containing partial match for the search query in either video title or description.
     - Ex 1: A video with title *`How to make tea?`* should match for the search query `tea how`
+    
+## Development:
+- Clone the project
+```https://github.com/themechanicalcoder/fampay-backend-assignment.git 
+   cd fampay-backend-assignment
+```
+
+- Add apikey and mongodburi in the `dev.yaml` file
+```
+Name: fampay-backend-assignment
+YoutubeConfig:
+  ApiKey: ""
+  RelevanceLanguage: "en"
+  Query: "cricket"
+  MaxResults: 10
+WorkerConfig:
+  QueryInterval: 100 
+Server:
+  Addr: "0.0.0.0"
+  Port: 3000
+DBConfig: 
+  Database: "fampay1"
+  Collection: "video1"
+  MongoURI: "" 
+  ```
+  
+  
+- Run in development mode
+```go run main.go```
+
+
+## Running with Docker Compose
+When using Docker Compose,
+
+ - Set the MONGODB_URI environment variable in your .env file to
+``` MONGODB_URI = mongodb://mongo:27017```
+- Run:
+```docker-compose up -d```
+- Navigate to ```http://localhost:3000``` to see the app live
