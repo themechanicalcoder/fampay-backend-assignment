@@ -11,6 +11,6 @@ Server:
   Port: 3000
 DBConfig: 
   Database: "fampay1"
-  Collection: "video1"
-  MongoURI: ""
+  Collection: "video4"
+  MongoURI: "mongodb://mongo:27017"
   
