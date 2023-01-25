@@ -201,10 +201,11 @@ sample response
 ## Running with Docker Compose
 When using Docker Compose,
 
- - Set the MONGODB_URI environment variable in your .env file to
+ - Set the ApiKey to your apiKey and MongoURI variable in your dev.yaml file to
 ``` MONGODB_URI = mongodb://mongo:27017```
 - Run:
-```docker compose build
-   docker compose up
 ```
-- Navigate to ```http://localhost:3000``` to see the app live
+docker compose build
+docker compose up
+```
+- The app is hosted on ```http://localhost:3000```
