@@ -37,9 +37,9 @@ Server:
   Addr: "0.0.0.0"
   Port: 3000
 DBConfig: 
-  Database: "fampay1"
-  Collection: "video1"
-  MongoURI: "" 
+  Database: "fampay"
+  Collection: "video"
+  MongoURI: "mongodb://mongo:27017"
   ```
   
   
