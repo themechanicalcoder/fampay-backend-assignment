@@ -19,11 +19,12 @@ To make an API to fetch latest videos sorted in reverse chronological order of t
     
 ## Development:
 - Clone the project
-```https://github.com/themechanicalcoder/fampay-backend-assignment.git 
-   cd fampay-backend-assignment
+```
+https://github.com/themechanicalcoder/fampay-backend-assignment.git 
+cd fampay-backend-assignment
 ```
 
-- Add apikey in the `dev.yaml` file
+- Add apikey and MongoURI in the and `dev.yaml` file
 ```
 Name: fampay-backend-assignment
 YoutubeConfig:
@@ -43,8 +44,20 @@ DBConfig:
   ```
   
   
-- Run in development mode
+- Run in development mode by entering the command
 ```go run main.go```
+
+## Running with Docker Compose
+When using Docker Compose,
+
+ - Set the ApiKey to your apiKey and MongoURI variable in your dev.yaml file to
+``` MONGODB_URI = mongodb://mongo:27017```
+- Run:
+```
+docker compose build
+docker compose up
+```
+- The app is hosted on ```http://localhost:3000```
 
 ## APIs
 #### search `/v1/search`
@@ -196,16 +209,3 @@ sample response
     "error": {}
 }
 ```
-
-
-## Running with Docker Compose
-When using Docker Compose,
-
- - Set the ApiKey to your apiKey and MongoURI variable in your dev.yaml file to
-``` MONGODB_URI = mongodb://mongo:27017```
-- Run:
-```
-docker compose build
-docker compose up
-```
-- The app is hosted on ```http://localhost:3000```
