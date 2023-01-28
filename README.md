@@ -17,6 +17,10 @@ To make an API to fetch latest videos sorted in reverse chronological order of t
 - [x] Optimise search api, so that it's able to search videos containing partial match for the search query in either video title or description.
     - Ex 1: A video with title *`How to make tea?`* should match for the search query `tea how`
     
+##Tech Stack
+Golang 
+MongoDB
+    
 ## Development:
 - Clone the project
 ```
