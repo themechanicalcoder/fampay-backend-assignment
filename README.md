@@ -18,8 +18,9 @@ To make an API to fetch latest videos sorted in reverse chronological order of t
     - Ex 1: A video with title *`How to make tea?`* should match for the search query `tea how`
     
 ## Tech Stack
- - Golang 
+ - Golang (Iris framework)
 - MongoDB
+- Docker
     
 ## Development:
 - Clone the project
