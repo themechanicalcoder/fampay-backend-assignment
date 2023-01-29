@@ -11,7 +11,7 @@ import (
 // Search API to search the stored videos using their title and description.
 func (api API) search(ctx iris.Context) {
 	searchRequest, err := readInput(ctx)
-	if err != nil {
+	if err != nil || searchRequest.Query == "" {
 		api.log.Println("Error while unmarshalling request ", searchRequest)
 		responseJson(ctx, http.StatusBadRequest, models.SearchResponse{
 			Videos: []models.YoutubeVideo{},
@@ -20,7 +20,7 @@ func (api API) search(ctx iris.Context) {
 			},
 		})
 	}
-	videos, err := api.manager.Search(searchRequest.Query)
+	videos, err := api.store.Search(searchRequest.Query)
 	if err != nil {
 		api.log.Println(fmt.Sprintf("Error while searching query %s ", searchRequest.Query), err)
 		responseJson(ctx, http.StatusInternalServerError, models.SearchResponse{

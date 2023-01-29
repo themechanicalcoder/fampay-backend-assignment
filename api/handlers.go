@@ -14,12 +14,12 @@ type API struct {
 	log *log.Logger
 	host string
 	port int
-	manager business.VideoStore
+	store business.VideoStore
 }
 
-func Initialize(config config.Server, manager business.VideoStore, log *log.Logger) API {
+func Initialize(config config.Server, store business.VideoStore, log *log.Logger) API {
 	app := iris.New()
-	return API{app: app, manager: manager, host: config.Addr, port: config.Port, log: log}
+	return API{app: app, store: store, host: config.Addr, port: config.Port, log: log}
 }
 
 func (api API) register() {

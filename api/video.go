@@ -14,7 +14,7 @@ func (api API) getVideos(ctx iris.Context) {
 	limit := ctx.URLParamIntDefault("limit", 10)
 	offset := ctx.URLParamIntDefault("offset", 0)
 	
-	videos, err := api.manager.FetchVideos(offset, limit)
+	videos, err := api.store.FetchVideos(offset, limit)
 	if err != nil {
 		log.Println("Error while fetching videos ", err)
 		responseJson(ctx, http.StatusInternalServerError, models.SearchResponse{
