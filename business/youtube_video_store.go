@@ -7,7 +7,6 @@ import (
 	"github.com/themechanicalcoder/fampay-backend-assignment/database"
 	"github.com/themechanicalcoder/fampay-backend-assignment/models"
 	"go.mongodb.org/mongo-driver/bson"
-	// "go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -20,11 +19,11 @@ func Initialize(database database.DB) VideoStore {
 }
 
 // Search videos containing partial match for the search query in either video title or description.
-func (manager YoutubeVideoStore) Search(query string) (videos []models.YoutubeVideo, err error) {
+func (store YoutubeVideoStore) Search(query string) (videos []models.YoutubeVideo, err error) {
 	filter := generateFuzzyFilter(query)
 	sort := bson.D{{"score", bson.D{{"$meta", "textScore"}}}}
 	findOptions := options.Find().SetSort(sort)
-	err = manager.db.Find(context.Background(), filter, findOptions, &videos)
+	err = store.db.Find(context.Background(), filter, findOptions, &videos)
 	if err != nil {
 		return nil, err
 	}
@@ -34,14 +33,14 @@ func (manager YoutubeVideoStore) Search(query string) (videos []models.YoutubeVi
 /*
 	Returns paginated sorted in descending order of published datetime.
 */
-func (manager YoutubeVideoStore) FetchVideos(offset int, limit int) (videos []models.YoutubeVideo, err error) {
+func (store YoutubeVideoStore) FetchVideos(offset int, limit int) (videos []models.YoutubeVideo, err error) {
 	filter := bson.M{}
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{"publishedat", -1}})
 	findOptions.SetSkip(int64(offset))
 	findOptions.SetLimit(int64(limit))
 
-	err = manager.db.Find(context.Background(), filter, findOptions, &videos)
+	err = store.db.Find(context.Background(), filter, findOptions, &videos)
 	if err != nil {
 		return nil, err
 	}
@@ -51,12 +50,12 @@ func (manager YoutubeVideoStore) FetchVideos(offset int, limit int) (videos []mo
 /*
 	Insert the youtube videos into database
 */
-func (manager YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) error {
+func (store YoutubeVideoStore) InsertVideos(videos []models.YoutubeVideo) error {
 	var interfaces []interface{}
 	for _, data := range videos {
 		interfaces = append(interfaces, data)
 	}
-	_, err := manager.db.InsertMany(context.Background(), interfaces)
+	_, err := store.db.InsertMany(context.Background(), interfaces)
 	if err != nil {
 		return fmt.Errorf("Error while inserting videos in database %w", err)
 	}
