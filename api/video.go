@@ -24,8 +24,19 @@ func (api API) getVideos(ctx iris.Context) {
 			},
 		})
 	}
-	response := models.SearchResponse{
+	var prev string
+	if (offset - limit < 0) {
+		prev = ""
+	}else{
+		prev = fmt.Sprintf("/v1/videos?limit=%d&offset=%d", limit, offset - limit)
+	}
+	response := models.GetVideoResponse{
 		Status: "SUCCESS",
+		Links: models.Links{
+			Next: fmt.Sprintf("/v1/videos?limit=%d&offset=%d", limit, offset + limit),
+			Previous: prev,
+			Base: fmt.Sprintf("%s:%d", api.host, api.port),
+		},
 		Videos: videos,
 	}
 	responseJson(ctx, http.StatusOK, response)

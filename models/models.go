@@ -8,6 +8,19 @@ type ErrorResponse struct {
 	Description string `json:"description,omitempty"`
 }
 
+type GetVideoResponse struct {
+	Status string
+	Links  Links          `json:"_links"`
+	Videos []YoutubeVideo `json:"videos"`
+	Error  ErrorResponse  `json:"error,omitempty"`
+}
+
+type Links struct {
+	Next     string `json:"next"`
+	Previous string `json:"prev,omitempty"`
+	Base     string `json:"base"`
+}
+
 type SearchResponse struct {
 	Status string
 	Videos []YoutubeVideo `json:"videos"`
